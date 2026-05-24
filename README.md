@@ -11,7 +11,7 @@ Both the **GBA** and **Legacy Collection** versions of the following are support
 - Mega Man Battle Network (English) / Rockman EXE (Japanese)
 - Mega Man Battle Network 2 (English) / Rockman EXE 2 (Japanese)
 - Mega Man Battle Network 3 Blue/White (English) / Rockman EXE 3 original/Black (Japanese)
-- Mega Man Battle Network 4 Red Sun/Blue Moon (GBA) / Rockman EXE 4 Tournament Red Sun/Blue Moon (GBA)
+- Mega Man Battle Network 4 Red Sun/Blue Moon (English) / Rockman EXE 4 Tournament Red Sun/Blue Moon (Japanese)
 
 Support for Mega Man Battle Network 5 and 6 may possibly be added in the future, but I make no promises. There are no plans to add support for the Mega Man Star Force games.
 
