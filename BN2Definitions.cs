@@ -1425,7 +1425,7 @@ namespace MMBNSaveEditor
             return postBytes;
         }
         
-        public new bool encountersUsingSubsections = true;
+        public override bool encountersUsingSubsections { get { return true; } }
         
         public override uint getBaseEncounterPointerForArea(byte area, byte subsection = 0xFF, char version = 'M', string language = "en", bool lc = false)
         {

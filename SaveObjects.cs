@@ -709,9 +709,10 @@ namespace MMBNSaveEditor
                 return;
             }
             
+            bool usingSubsections = SaveData.getGameDef().encountersUsingSubsections;
             area = (byte)(encounterID / 0x10000);
-            subsection = (byte)((encounterID % 0x10000) / 0x100);
-            offsetInArea = M.game == 2? encounterID % 0x100 : encounterID % 0x10000;
+            subsection = (byte)(usingSubsections? (encounterID % 0x10000) / 0x100 : 0x00);
+            offsetInArea = usingSubsections? encounterID % 0x100 : encounterID % 0x10000;
         }
         
         /// <summary>Writes pointer at address, relative to the proper base address for current version settings.</summary>

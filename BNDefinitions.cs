@@ -71,7 +71,7 @@ namespace MMBNSaveEditor
         public virtual ShopItem[] getInitialChipOrderInventory(char version = 'M') { return new ShopItem[0]; }
         public virtual byte[] getInitialBBSPostsList() { return new byte[0]; }
         
-        public bool encountersUsingSubsections = false;
+        public virtual bool encountersUsingSubsections { get { return false; } }
         public virtual uint getBaseEncounterPointerForArea(byte area, byte subsection = 0xFF, char version = 'M', string language = "en", bool lc = false) { return 0; }
         public virtual Dictionary<int, string> getDefinedEncounters() { return new Dictionary<int, string>(); }
         

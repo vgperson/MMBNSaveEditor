@@ -271,6 +271,8 @@ namespace MMBNSaveEditor
             "F----", // Bass
         }; } }
         
+        // No unobtainableCodes, as all defined codes are seemingly obtainable
+        
         public override int[] gameOrderStandardChips { get { return new int[] {
             1, // Cannon
             2, // HiCannon
