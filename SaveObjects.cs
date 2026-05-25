@@ -647,8 +647,9 @@ namespace MMBNSaveEditor
         {
             BNDefinitions def = SaveData.getGameDef();
            
-            // Compare readAddress against base address for (subsection 00 of) each area to determine what area it belongs to.
+            // Determine what area pointers readAddress is cloest to (by comparing to base address for subsection 00).
             area = 0x00;
+            int closestOffsetToAreaBase = int.MaxValue;
             uint myBaseAddress = 0;
             for (byte checkArea = 0x80; checkArea < 0x9F; checkArea++)
             {
@@ -656,36 +657,45 @@ namespace MMBNSaveEditor
                 if (areaBaseAddress == 0)
                     continue;
                 
-                if (readAddress >= areaBaseAddress) // Could be part of this area, so set to this area for now
+                if (readAddress >= areaBaseAddress) // Could be part of this area; check if it's a lower relative offset any others so far
                 {
-                    area = checkArea;
-                    subsection = 0x00;
-                    myBaseAddress = areaBaseAddress;
+                    int relativeOffset = (int)(readAddress - areaBaseAddress);
+                    if (relativeOffset < closestOffsetToAreaBase)
+                    {
+                        closestOffsetToAreaBase = relativeOffset;
+                        area = checkArea;
+                        subsection = 0x00;
+                        myBaseAddress = areaBaseAddress;
+                    }
                 }
                 else // Passed, so stop searching and stick with current area
                     break;
             }
             
-            // If game uses subsections, determine what subsection readAddress fits into in the selected area.
-            if (def.encountersUsingSubsections)
+            // Determine what subsection in the selected area readAddress is closest to.
+            offsetInArea = int.MaxValue;
+            for (byte checkSub = 0x00; checkSub < 0x40; checkSub++)
             {
-                for (byte checkSub = 0x00; checkSub < 0x40; checkSub++)
+                uint subsectionAddress = def.getBaseEncounterPointerForArea(area, checkSub, M.saveData.version, M.saveData.language, M.saveData.lc);
+                if (subsectionAddress == 0)
+                    continue;
+                
+                if (readAddress >= subsectionAddress) // Could be part of this subsection; check if it's a lower relative offset than any others so far
                 {
-                    uint subsectionAddress = def.getBaseEncounterPointerForArea(area, checkSub, M.saveData.version, M.saveData.language, M.saveData.lc);
-                    if (subsectionAddress == 0)
-                        continue;
-                    
-                    if (readAddress >= subsectionAddress) // Could be part of this subsection, so set to this subsection for now
+                    int relativeOffset = (int)(readAddress - subsectionAddress);
+                    if (relativeOffset < offsetInArea)
                     {
+                        offsetInArea = relativeOffset;
                         subsection = checkSub;
                         myBaseAddress = subsectionAddress;
                     }
-                    else // Passed, so stop searching and stick with current subsection
-                        break;
                 }
             }
             
-            offsetInArea = (int)(readAddress - myBaseAddress);
+            if (offsetInArea == int.MaxValue) // Couldn't find a match, so fall back on offset 0
+                offsetInArea = 0;
+            if (offsetInArea % def.encounterPointerSpacing != 0) // Offset does not match spacing from base, so fall back on offset 0
+                offsetInArea = 0;
         }
         
         /// <summary>Gets the "encounter ID," a thing I made up that combines the area number and the offset within that area.</summary>
@@ -709,10 +719,9 @@ namespace MMBNSaveEditor
                 return;
             }
             
-            bool usingSubsections = SaveData.getGameDef().encountersUsingSubsections;
             area = (byte)(encounterID / 0x10000);
-            subsection = (byte)(usingSubsections? (encounterID % 0x10000) / 0x100 : 0x00);
-            offsetInArea = usingSubsections? encounterID % 0x100 : encounterID % 0x10000;
+            subsection = (byte)((encounterID % 0x10000) / 0x100);
+            offsetInArea = encounterID % 0x100;
         }
         
         /// <summary>Writes pointer at address, relative to the proper base address for current version settings.</summary>

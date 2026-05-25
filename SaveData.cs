@@ -2990,7 +2990,8 @@ namespace MMBNSaveEditor
                 }
             }
             
-            Clipboard.SetText(writer.ToString());
+            if (writer.ToString() != "")
+                Clipboard.SetText(writer.ToString());
             
             Console.WriteLine();
             Console.WriteLine("Save info put on clipboard.");
@@ -3066,18 +3067,18 @@ namespace MMBNSaveEditor
                     {
                         if (definedEncounters.ContainsKey(encounterID)) // Use name from defined encounter list if it matches one
                             encounterDisplay = definedEncounters[encounterID];
-                        else // Otherwise, show a name based on area and offset
+                        else // Otherwise, show a generic name based on area and offset
                         {
-                            if (getGameDef().encountersUsingSubsections) // Game that uses subsections
-                            {
-                                byte encounterArea = locEnemyEncounterPointer.area;
-                                byte rawSubarea = (byte)(locEnemyEncounterPointer.subsection % 0x10);
-                                byte specialLevel = (byte)(locEnemyEncounterPointer.subsection / 0x10);
-                                string specialStr = specialLevel == 1? " (Special)" : specialLevel > 1? " (Special " + (specialLevel + 1) + ")" : "";
-                                encounterDisplay = getSubareaName(encounterArea, rawSubarea) + specialStr + " +" + locEnemyEncounterPointer.offsetInArea.ToString("X2");
-                            }
-                            else // Game that bases everything from area only
-                                encounterDisplay = getAreaName(locEnemyEncounterPointer.area) + " +" + locEnemyEncounterPointer.offsetInArea.ToString("X2");
+                            byte encounterArea = locEnemyEncounterPointer.area;
+                            
+                            byte rawSubarea = (byte)(locEnemyEncounterPointer.subsection % 0x10);
+                            byte specialLevel = (byte)(locEnemyEncounterPointer.subsection / 0x10);
+                            string specialStr = specialLevel == 1? " (Special)" : specialLevel > 1? " (Special " + specialLevel + ")" : "";
+                            
+                            int myOffset = locEnemyEncounterPointer.offsetInArea;
+                            string encounterNumStr = "#" + ((myOffset / getGameDef().encounterPointerSpacing) + 1);
+                            
+                            encounterDisplay = getSubareaName(encounterArea, rawSubarea) + specialStr + " " + encounterNumStr;
                         }
                     }
                     return getInfoString("LocEnemy Target", encounterDisplay);
@@ -8832,6 +8833,18 @@ namespace MMBNSaveEditor
             array[index + 1] = (byte)(value / 256);
         }
         
+        /// <summary>Reads four bytes in a byte array as a uint value.</summary>
+        /// <param name="array">The byte array to read from.</param>
+        /// <param name="index">The starting index to read at.</param>
+        /// <returns>The four-byte value as a ushort.</returns>
+        public static uint readUIntInByteArray(byte[] array, int index)
+        {
+            if (index + 3 >= array.Length)
+                return 0;
+            
+            return (uint)(array[index] + (array[index + 1] * 256) + (array[index + 2] * 65536) + (array[index + 3] * 16777216));
+        }
+        
         /// <summary>Swaps two values passed as reference.</summary>
         /// <param name="value1">The first value.</param>
         /// <param name="value2">The second value.</param>
@@ -8915,7 +8928,8 @@ namespace MMBNSaveEditor
                 StringWriter writer = new StringWriter();
                 foreach (ROMChipData chip in chipData)
                     writer.WriteLine(chip.getString());
-                Clipboard.SetText(writer.ToString());
+                if (writer.ToString() != "")
+                    Clipboard.SetText(writer.ToString());
             }
             else if (mode == "alphabet") // Write to clipboard in alphabetical order
             {
@@ -8937,7 +8951,8 @@ namespace MMBNSaveEditor
                 StringWriter writer = new StringWriter();
                 foreach (int order in orderNumbers)
                     writer.WriteLine(byAlphabetOrder[order].getString());
-                Clipboard.SetText(writer.ToString());
+                if (writer.ToString() != "")
+                    Clipboard.SetText(writer.ToString());
             }
             else if (mode.StartsWith("unknown")) // i.e. unknown1F; write to clipboard sorted by an unknown value
             {
@@ -8963,7 +8978,8 @@ namespace MMBNSaveEditor
                     foreach (ROMChipData chip in byUnknownValue[unknown])
                         writer.WriteLine(chip.getString(true));
                 
-                Clipboard.SetText(writer.ToString());
+                if (writer.ToString() != "")
+                    Clipboard.SetText(writer.ToString());
             }
             else if (mode == "rewrite") // After reading data into ROMChipData objects, rewrites to bytes, useful for verifying write parity
             {
@@ -8974,7 +8990,8 @@ namespace MMBNSaveEditor
                 StringWriter writer = new StringWriter();
                 foreach (byte newByte in newBytes)
                     writer.Write(newByte.ToString("X2") + " ");
-                Clipboard.SetText(writer.ToString());
+                if (writer.ToString() != "")
+                    Clipboard.SetText(writer.ToString());
             }
             else if (mode == "resort") // Redo alphabetical ordering and write new bytes to clipboard
             {
@@ -9025,21 +9042,24 @@ namespace MMBNSaveEditor
                 StringWriter writer = new StringWriter();
                 foreach (byte newByte in newBytes)
                     writer.Write(newByte.ToString("X2") + " ");
-                Clipboard.SetText(writer.ToString());
+                if (writer.ToString() != "")
+                    Clipboard.SetText(writer.ToString());
             }
             else if (mode == "codedef") // Compile chipCodes letter list for definitions
             {
                 StringWriter writer = new StringWriter();
                 for (int i = 0; i < chipData.Count; i++)
                     writer.WriteLine("\"" + chipData[i].getCodesString() + "\", // " + getGameDef(game).chipNames[i]);
-                Clipboard.SetText(writer.ToString());
+                if (writer.ToString() != "")
+                    Clipboard.SetText(writer.ToString());
             }
             else if (mode == "sizedef") // Compile chipSizes list for definitions
             {
                 StringWriter writer = new StringWriter();
                 for (int i = 0; i < chipData.Count; i++)
                     writer.WriteLine(chipData[i].memorySize + ", // " + getGameDef(game).chipNames[i]);
-                Clipboard.SetText(writer.ToString());
+                if (writer.ToString() != "")
+                    Clipboard.SetText(writer.ToString());
             }
             else if (mode == "orderdef") // Compile gameOrder chip ID list for definitions
             {
@@ -9064,7 +9084,8 @@ namespace MMBNSaveEditor
                     ROMChipData chip = byIDOrder[chipID];
                     writer.WriteLine(chip.index + ", // " + getGameDef(game).chipNames[chip.index]);
                 }
-                Clipboard.SetText(writer.ToString());
+                if (writer.ToString() != "")
+                    Clipboard.SetText(writer.ToString());
             }
             
             Console.WriteLine("Done processing ROM chip data.");
@@ -9175,7 +9196,135 @@ namespace MMBNSaveEditor
                     writer.WriteLine("// " + chipName + " not found");
             }
             
-            Clipboard.SetText(writer.ToString());
+            if (writer.ToString() != "")
+                Clipboard.SetText(writer.ToString());
+            
+            Console.WriteLine("Done generating definitions.");
+            M.waitForEnter();
+        }
+        
+        /// <summary>A debug function that loads a file and, given the address for the list of area pointers, compiles encounter pointer definitions.</summary>
+        /// <param name="game">The game number, so that area names can be included in comments.</param>
+        /// <param name="areaPointerListAddress">The address in the file where the list of area pointers begins.</param>
+        /// <param name="baseOffset">The base offset for the file which pointers are using. Usually 0x8000000 for GBA and 0 for LC.</param>
+        /// <param name="areaListAddressesManual">If there is no easy list of area pointers in the file, can directly provide a list of pointers to subsection lists instead.</param>
+        [STAThread]
+        public static void compileEncounterPointers(int game, uint areaPointerListAddress, uint baseOffset = 0x8000000, int[] areaListAddressesManual = null)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Title = "Select Source File";
+            
+            if (dialog.ShowDialog() != DialogResult.OK)
+                return;
+            
+            byte[] file = File.ReadAllBytes(dialog.FileName);
+            
+            List<int> areaListAddresses;
+            if (areaListAddressesManual == null) // Get pointers to each area list from the file
+            {
+                areaListAddresses = new List<int>();
+                uint position = areaPointerListAddress;
+                do
+                {
+                    if (position < 0 || position >= file.Length)
+                    {
+                        Console.WriteLine("Position " + position.ToString("X2") + " is outside file bounds.");
+                        M.waitForEnter();
+                        return;
+                    }
+                    
+                    uint pointer = readUIntInByteArray(file, (int)position);
+                    if (pointer < baseOffset || pointer - baseOffset >= file.Length) // Reached something that doesn't look like a valid pointer, so stop
+                        break;
+                    
+                    areaListAddresses.Add((int)pointer);
+                    position += 4;
+                } while (true);
+            }
+            else // Use manually-provided pointers to area lists
+                areaListAddresses = new List<int>(areaListAddressesManual);
+            
+            StringWriter writer = new StringWriter();
+            
+            for (int i = 0; i < areaListAddresses.Count; i++)
+            {
+                int address = areaListAddresses[i];
+                if (address == -1)
+                    continue;
+                writer.WriteLine(compileEncounterPointersForArea(file, game, 0x80 + i, (uint)(address - baseOffset), baseOffset));
+            }
+            
+            if (writer.ToString() != "")
+                Clipboard.SetText(writer.ToString());
+            
+            Console.WriteLine("Done generating definitions.");
+            M.waitForEnter();
+        }
+        
+        /// <summary>Function for the above which processes encounters for a single area.</summary>
+        /// <param name="file">The loaded file bytes.</param>
+        /// <param name="game">The game number, so that area names can be included in comments.</param>
+        /// <param name="areaNum">The area number.</param>
+        /// <param name="areaListAddress">The (actual, no-offset) address in the file where the list of subsection pointers for this area begins.</param>
+        /// <param name="baseOffset">The base offset for the file which pointers are using. Usually 0x8000000 for GBA and 0 for LC.</param>
+        /// <returns>The string of definitions for the area.</returns>
+        static string compileEncounterPointersForArea(byte[] file, int game, int areaNum, uint areaListAddress, uint baseOffset = 0x8000000)
+        {
+            BNDefinitions def = getGameDef(game);
+            string singleIndent = "    ";
+            string indent0 = singleIndent + singleIndent + singleIndent + singleIndent;
+            string indent1 = indent0 + singleIndent;
+            string indent2 = indent1 + singleIndent;
+            string lb = Environment.NewLine;
+            
+            List<uint> subsectionBaseAddresses = new List<uint>();
+            uint position = areaListAddress;
+            do
+            {
+                if (position < 0 || position >= file.Length)
+                {
+                    Console.WriteLine("Position " + position.ToString("X2") + " is outside file bounds.");
+                    M.waitForEnter();
+                    return "";
+                }
+                
+                uint pointer = readUIntInByteArray(file, (int)position);
+                if (pointer < baseOffset || pointer - baseOffset >= file.Length) // Reached something that doesn't look like a valid pointer, so stop
+                    break;
+                
+                subsectionBaseAddresses.Add(pointer);
+                position += 4;
+            } while (true);
+            
+            StringWriter writer = new StringWriter();
+            writer.WriteLine(indent0 + "case 0x" + areaNum.ToString("X2") + ": // " + def.getSubareaName(areaNum, 0, true) + lb
+                + indent1 + "switch (subsection)" + Environment.NewLine
+                + indent1 + "{");
+            
+            uint defaultPointer = subsectionBaseAddresses.Count > 0? subsectionBaseAddresses[0] : 0;
+            for (int subsection = 0; subsection < subsectionBaseAddresses.Count; subsection++)
+            {
+                int rawSubarea = subsection % 0x10;
+                int specialLevel = subsection / 0x10;
+                
+                uint myPointer = subsectionBaseAddresses[subsection];
+                string subareaName = def.getSubareaName(areaNum, rawSubarea);
+                string specialStr = specialLevel == 1? " Special" : specialLevel > 1? " Special " + specialLevel : "";
+                
+                if (subsection > 0 && myPointer == defaultPointer) // Has same pointer as first subsection
+                {
+                    if (subareaName == "" && myPointer == defaultPointer) // Unused subarea, so just leave it out
+                        continue;
+                    specialStr += " <repeat>"; // If subarea is a used one, note as repeat
+                }
+                
+                writer.WriteLine(indent2 + "case 0x" + subsection.ToString("X2") + ": baseAddress = 0x" + myPointer.ToString("X2") + "; break; // " + subareaName + specialStr);
+            }
+            
+            writer.Write(indent1 + "}" + Environment.NewLine
+                + indent1 + "break;");
+            
+            return writer.ToString();
         }
     }
     

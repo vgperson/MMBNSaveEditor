@@ -3270,41 +3270,173 @@ namespace MMBNSaveEditor
             return postBytes;
         }
         
-        public override uint getBaseEncounterPointerForArea(byte area, byte subsection = 0xFF, char version = 'M', string language = "en", bool lc = false)
+        public override byte encounterPointerSpacing { get { return 0xC; } }
+        
+        public override uint getBaseEncounterPointerForArea(byte area, byte subsection = 0x00, char version = 'M', string language = "en", bool lc = false)
         {
             int baseAddress = 0x0;
-            int type = !lc && language == "en"? 0 : !lc && language == "jp"? 1 : 2;
             switch (area)
             {
-                // Type 0: GBA English (Red Sun), type 1: GBA Japanese (Red Sun), type 2: Legacy Collection (in labels.bin)
-                case 0x80: baseAddress = type == 0? 0x80FC82C : type == 1? 0x80FC700 : 0x42D70; break; // ElecTower Comp
-                case 0x81: baseAddress = type == 0? 0x80FCA98 : type == 1? 0x80FC96C : 0x42FE0; break; // ToyRobo Comp
-                case 0x82: baseAddress = type == 0? 0x80FCF64 : type == 1? 0x80FCE38 : 0x434B0; break; // Asteroid Comp
-                case 0x83: baseAddress = type == 0? 0x80FD464 : type == 1? 0x80FD338 : 0x439B0; break; // (Unused)
-                case 0x84: baseAddress = type == 0? 0x80FD61C : type == 1? 0x80FD530 : 0x43BA8; break; // (Unused)
-                case 0x85: baseAddress = type == 0? 0x80FD814 : type == 1? 0x80FD728 : 0x43DA0; break; // (Unused)
-                case 0x86: baseAddress = type == 0? 0x80FDA0C : type == 1? 0x80FD920 : 0x43F98; break; // (Unused)
-                case 0x87: baseAddress = type == 0? 0x80FDC04 : type == 1? 0x80FDB18 : 0x44190; break; // (Unused)
-                case 0x88: baseAddress = type == 0? 0x80FDE3C : type == 1? 0x80FDD10 : 0x44388; break; // Home Pages
-                case 0x89: baseAddress = type == 0? 0x80FDFF4 : type == 1? 0x80FDF08 : 0x44580; break; // (Unused)
-                case 0x8A: baseAddress = type == 0? 0x80FE1EC : type == 1? 0x80FE100 : 0x44778; break; // (Unused)
-                case 0x8B: baseAddress = type == 0? 0x80FE3E4 : type == 1? 0x80FE2F8 : 0x44970; break; // (Unused)
-                case 0x8C: baseAddress = type == 0? 0x80FE5DC : type == 1? 0x80FE4F0 : 0x44B68; break; // Cyberworlds A
-                case 0x8D: baseAddress = type == 0? 0x80FF4E4 : type == 1? 0x80FF3F8 : 0x45A70; break; // Cyberworlds B
-                case 0x8E: baseAddress = type == 0? 0x80FFD1C : type == 1? 0x80FFC30 : 0x462A8; break; // WaterGod Comp
-                case 0x8F: baseAddress = type == 0? 0x80FFE58 : type == 1? 0x80FFD6C : 0x463E8; break; // (Unused)
-                case 0x90: baseAddress = type == 0? 0x8100150 : type == 1? 0x8100024 : 0x466A0; break; // ACDC Area
-                case 0x91: baseAddress = type == 0? 0x810081C : type == 1? 0x81006F0 : 0x46D70; break; // Town Area
-                case 0x92: baseAddress = type == 0? 0x8100F84 : type == 1? 0x8100E58 : 0x474E0; break; // Park Area
-                case 0x93: baseAddress = type == 0? 0x8101738 : type == 1? 0x810160C : 0x47C98; break; // Overseas Nets
-                case 0x94: baseAddress = type == 0? 0x8101FC8 : type == 1? 0x8101E9C : 0x48528; break; // Undernet
+                // Type 0: GBA English (Red Sun), type 1: Legacy Collection (in labels.bin)
+                case 0x80: // ElecTower Comp
+                    switch (subsection)
+                    {
+                        case 0x00: baseAddress = !lc? 0x80FC82C : 0x42D70; break; // ElecTower Comp 1
+                        case 0x01: baseAddress = !lc? 0x80FC890 : 0x42DD4; break; // ElecTower Comp 2
+                    }
+                    break;
+                case 0x81: // ToyRobo Comp
+                    switch (subsection)
+                    {
+                        case 0x00: baseAddress = !lc? 0x80FCA98 : 0x42FE0; break; // ToyRobo Comp 1
+                        case 0x01: baseAddress = !lc? 0x80FCB14 : 0x4305C; break; // ToyRobo Comp 2
+                        case 0x02: baseAddress = !lc? 0x80FCB90 : 0x430D8; break; // ToyRobo Comp 3
+                        case 0x03: baseAddress = !lc? 0x80FCC0C : 0x43154; break; // ToyRobo Comp 4
+                    }
+                    break;
+                case 0x82: // Asteroid Comp
+                    switch (subsection)
+                    {
+                        case 0x00: baseAddress = !lc? 0x80FCF64 : 0x434B0; break; // Asteroid Comp 1
+                        case 0x01: baseAddress = !lc? 0x80FCFE0 : 0x4352C; break; // Asteroid Comp 2
+                        case 0x02: baseAddress = !lc? 0x80FD05C : 0x435A8; break; // Asteroid Comp 3
+                        case 0x03: baseAddress = !lc? 0x80FD0D8 : 0x43624; break; // Asteroid Comp 4
+                        case 0x04: baseAddress = !lc? 0x80FD154 : 0x436A0; break; // Asteroid Control Area
+                    }
+                    break;
+                // 0x83 is unused, though does have a unique pointer list
+                // 0x84 is unused, though does have a unique pointer list
+                // 0x85 is unused, though does have a unique pointer list
+                // 0x86 is unused, though does have a unique pointer list
+                // 0x87 is unused, though does have a unique pointer list
+                // 0x88 is Home Pages, which shouldn't have encounters, though does have a unique pointer list
+                // 0x89 is unused, though does have a unique pointer list
+                // 0x8A is unused, though does have a unique pointer list
+                // 0x8B is unused, though does have a unique pointer list
+                case 0x8C: // Cyberworlds A
+                    switch (subsection)
+                    {
+                        case 0x00: baseAddress = !lc? 0x80FE61C : 0x44B68; break; // Oven Comp
+                        case 0x01: baseAddress = !lc? 0x80FE68C : 0x44BD8; break; // Stereo Comp
+                        case 0x02: baseAddress = !lc? 0x80FE6FC : 0x44C48; break; // Hotdog Comp
+                        case 0x03: baseAddress = !lc? 0x80FE778 : 0x44CC4; break; // Dome NetBattle Machine Comp
+                        case 0x04: baseAddress = !lc? 0x80FE7E8 : 0x44D34; break; // CyberTop Comp
+                        case 0x05: baseAddress = !lc? 0x80FE84C : 0x44D98; break; // LCD Comp
+                        case 0x06: baseAddress = !lc? 0x80FE8B0 : 0x44DFC; break; // Castillo NetBattle Machine Comp
+                        case 0x07: baseAddress = !lc? 0x80FE92C : 0x44E78; break; // Statue Comp
+                        case 0x08: baseAddress = !lc? 0x80FE99C : 0x44EE8; break; // Nupopo Comp
+                        case 0x09: baseAddress = !lc? 0x80FEA00 : 0x44F4C; break; // Sharo Computer Comp
+                        case 0x0A: baseAddress = !lc? 0x80FEA7C : 0x44FC8; break; // Toy Comp
+                        case 0x0B: baseAddress = !lc? 0x80FEAE0 : 0x4502C; break; // Colosseum NetBattle Machine Comp
+                        case 0x0C: baseAddress = !lc? 0x80FEB5C : 0x450A8; break; // Lion Comp
+                        case 0x0D: baseAddress = !lc? 0x80FEBC0 : 0x4510C; break; // Doghouse Comp
+                        case 0x0E: baseAddress = !lc? 0x80FEC24 : 0x45170; break; // Game Comp
+                        case 0x0F: baseAddress = !lc? 0x80FEC88 : 0x451D4; break; // Vending Machine Comp
+                    }
+                    break;
+                case 0x8D: // Cyberworlds B
+                    switch (subsection)
+                    {
+                        case 0x00: baseAddress = !lc? 0x80FF524 : 0x45A70; break; // Card Comp
+                        case 0x01: baseAddress = !lc? 0x80FF588 : 0x45AD4; break; // Water Comp
+                        case 0x02: baseAddress = !lc? 0x80FF604 : 0x45B50; break; // Ticket Comp
+                        case 0x03: baseAddress = !lc? 0x80FF674 : 0x45BC0; break; // Stand Comp
+                        case 0x04: case 0x05: case 0x06: case 0x07: baseAddress = !lc? 0x80FF6E4 : 0x45C30; break; // Antenna Comp 1/2/3/4
+                        case 0x08: baseAddress = !lc? 0x80FF748 : 0x45C94; break; // Buddha Comp
+                        case 0x09: baseAddress = !lc? 0x80FF7AC : 0x45CF8; break; // Goddess Comp
+                        case 0x0A: baseAddress = !lc? 0x80FF810 : 0x45D5C; break; // Hero Comp
+                        case 0x0B: baseAddress = !lc? 0x80FF874 : 0x45DC0; break; // Cook Comp
+                    }
+                    break;
+                case 0x8E: // WaterGod Comp
+                    baseAddress = !lc? 0x80FFD5C : 0x462A8; break; // All WaterGod Comps have same encounters
+                // 0x8F is unused, though does have a unique pointer list
+                case 0x90: // ACDC Area
+                    switch (subsection)
+                    {
+                        case 0x00: baseAddress = !lc? 0x8100150 : 0x466A0; break; // ACDC Area 1
+                        case 0x01: case 0x31: baseAddress = !lc? 0x81001B4 : 0x46704; break; // ACDC Area 2 ("Special 3" is same group as normal)
+                        case 0x02: case 0x32: baseAddress = !lc? 0x8100218 : 0x46768; break; // ACDC Area 3 ("Special 3" is same group as normal)
+                        case 0x10: baseAddress = !lc? 0x810027C : 0x467CC; break; // ACDC Area 1 Special
+                        case 0x11: baseAddress = !lc? 0x81002EC : 0x4683C; break; // ACDC Area 2 Special
+                        case 0x12: baseAddress = !lc? 0x810035C : 0x468AC; break; // ACDC Area 3 Special
+                        case 0x20: case 0x21: case 0x22: baseAddress = !lc? 0x81003CC : 0x4691C; break; // ACDC Area 1/2/3 Special 2
+                        case 0x30: baseAddress = !lc? 0x8100448 : 0x46998; break; // ACDC Area 1 Special 3
+                    }
+                    break;
+                case 0x91: // Town Area
+                    switch (subsection)
+                    {
+                        case 0x00: baseAddress = !lc? 0x810081C : 0x46D70; break; // Town Area 1
+                        case 0x01: baseAddress = !lc? 0x8100880 : 0x46DD4; break; // Town Area 2
+                        case 0x02: baseAddress = !lc? 0x81008E4 : 0x46E38; break; // Town Area 3
+                        case 0x03: baseAddress = !lc? 0x8100948 : 0x46E9C; break; // Town Area 4
+                        case 0x10: baseAddress = !lc? 0x81009AC : 0x46F00; break; // Town Area 1 Special
+                        case 0x11: baseAddress = !lc? 0x8100A1C : 0x46F70; break; // Town Area 2 Special
+                        case 0x12: baseAddress = !lc? 0x8100A8C : 0x46FE0; break; // Town Area 3 Special
+                        case 0x13: baseAddress = !lc? 0x8100AFC : 0x47050; break; // Town Area 4 Special
+                        case 0x20: case 0x21: case 0x22: case 0x23: baseAddress = !lc? 0x8100B6C : 0x470C0; break; // Town Area 1/2/3/4 Special 2
+                    }
+                    break;
+                case 0x92: // Park Area
+                    switch (subsection)
+                    {
+                        case 0x00: baseAddress = !lc? 0x8100F84 : 0x474E0; break; // Park Area 1
+                        case 0x01: baseAddress = !lc? 0x8101000 : 0x4755C; break; // Park Area 2
+                        case 0x02: baseAddress = !lc? 0x810107C : 0x475D8; break; // Park Area 3
+                        case 0x10: baseAddress = !lc? 0x81010F8 : 0x47654; break; // Park Area 1 Special
+                        case 0x11: baseAddress = !lc? 0x8101180 : 0x476DC; break; // Park Area 2 Special
+                        case 0x12: baseAddress = !lc? 0x8101208 : 0x47764; break; // Park Area 3 Special
+                        case 0x20: case 0x21: case 0x22: baseAddress = !lc? 0x8101290 : 0x477EC; break; // Park Area 1/2/3 Special 2
+                        case 0x30: case 0x31: case 0x32: baseAddress = !lc? 0x810130C : 0x47868; break; // Park Area 1/2/3 Special 3
+                    }
+                    break;
+                case 0x93: // Overseas Nets
+                    switch (subsection)
+                    {
+                        case 0x00: baseAddress = !lc? 0x8101738 : 0x47C98; break; // Yumland Area
+                        case 0x01: baseAddress = !lc? 0x81017CC : 0x47D2C; break; // Netopia Area
+                        case 0x02: baseAddress = !lc? 0x8101860 : 0x47DC0; break; // NetFrica Area
+                        case 0x03: baseAddress = !lc? 0x81018F4 : 0x47E54; break; // Sharo Area
+                        case 0x10: baseAddress = !lc? 0x8101988 : 0x47EE8; break; // Yumland Area Special
+                        case 0x11: baseAddress = !lc? 0x8101A28 : 0x47F88; break; // Netopia Area Special
+                        case 0x12: baseAddress = !lc? 0x8101AC8 : 0x48028; break; // NetFrica Area Special
+                        case 0x13: baseAddress = !lc? 0x8101B68 : 0x480C8; break; // Sharo Area Special
+                    }
+                    break;
+                case 0x94: // Undernet
+                    switch (subsection)
+                    {
+                        case 0x00: case 0x20: baseAddress = !lc? 0x8101FC8 : 0x48528; break; // Undernet 1 ("Special 2" is same as normal)
+                        case 0x01: case 0x21: baseAddress = !lc? 0x810205C : 0x485BC; break; // Undernet 2 ("Special 2" is same as normal)
+                        case 0x02: case 0x22: baseAddress = !lc? 0x81020F0 : 0x48650; break; // Undernet 3 ("Special 2" is same as normal)
+                        case 0x03: case 0x23: baseAddress = !lc? 0x8102184 : 0x486E4; break; // Undernet 4 ("Special 2" is same as normal)
+                        case 0x04: case 0x24: baseAddress = !lc? 0x8102218 : 0x48778; break; // Undernet 5 ("Special 2" is same as normal)
+                        case 0x05: case 0x25: baseAddress = !lc? 0x81022AC : 0x4880C; break; // Undernet 6 ("Special 2" is same as normal)
+                        case 0x06: case 0x16: case 0x26: baseAddress = !lc? 0x8102364 : 0x488C4; break; // Black Earth 1 ("Special" and "Special 2" are same as normal)
+                        case 0x07: baseAddress = !lc? 0x81023F8 : 0x48958; break; // Black Earth 2
+                        case 0x10: baseAddress = !lc? 0x810248C : 0x489EC; break; // Undernet 1 Special
+                        case 0x11: baseAddress = !lc? 0x810252C : 0x48A8C; break; // Undernet 2 Special
+                        case 0x12: baseAddress = !lc? 0x81025CC : 0x48B2C; break; // Undernet 3 Special
+                        case 0x13: baseAddress = !lc? 0x810266C : 0x48BCC; break; // Undernet 4 Special
+                        case 0x14: baseAddress = !lc? 0x810270C : 0x48C6C; break; // Undernet 5 Special
+                        case 0x15: baseAddress = !lc? 0x81027AC : 0x48D0C; break; // Undernet 6 Special
+                        case 0x17: baseAddress = !lc? 0x8102870 : 0x48DD0; break; // Black Earth 2 Special
+                        case 0x27: baseAddress = !lc? 0x8102910 : 0x48E70; break; // Black Earth 2 Special 2
+                    }
+                    break;
             }
             
             if (baseAddress == 0)
                 return 0;
             
-            if (!lc && version == 'S') // Blue Moon addresses are +C from Red Sun in all GBA versions, but no difference between them in LC
-                baseAddress += 0xC;
+            if (!lc) // Offsets from GBA English Red Sun
+            {
+                if (language == "jp") // For both Red Sun EN/JP and Blue Moon EN/JP, Japanese is -12C from English
+                    baseAddress -= 0x12C;
+                if (version == 'S') // Blue Moon addresses are +C from Red Sun in all GBA versions (no difference between RS/BM in LC)
+                    baseAddress += 0xC;
+            }
             
             return (uint)baseAddress;
         }
@@ -3313,40 +3445,50 @@ namespace MMBNSaveEditor
         {
             Dictionary<int, string> encounters = new Dictionary<int, string>();
             
-            // Define "encounter IDs" (a thing I made up, not really a thing in-game) by adding area value * 0x10000 to the offset within that area.
+            // Define "encounter IDs" (a thing I made up, not really a thing in-game) by combining area, subsection, and offset within that subsection.
             int areaIDMult = 0x10000;
+            int sectionIDMult = 0x100;
             
-            int acdcAreaID = 0x90 * areaIDMult; // RS English base: 0x8100150
-            encounters[acdcAreaID + 0x18C] = "AquaMan Omega";
-            encounters[acdcAreaID + 0x1FC] = "GutsMan Omega";
-            encounters[acdcAreaID + 0x26C] = "SparkMan Omega";
+            int subarea1Special = 0x10 * sectionIDMult;
+            int subarea2Special = 0x11 * sectionIDMult;
+            int subarea3Special = 0x12 * sectionIDMult;
+            int subarea4Special = 0x13 * sectionIDMult;
+            int subarea5Special = 0x14 * sectionIDMult;
+            int subarea6Special = 0x15 * sectionIDMult;
+            int subarea8Special = 0x17 * sectionIDMult;
+            int subarea8Special2 = 0x27 * sectionIDMult;
             
-            int townAreaID = 0x91 * areaIDMult; // RS English base: 0x810081C
-            encounters[townAreaID + 0x1F0] = "TopMan Omega";
-            encounters[townAreaID + 0x260] = "FireMan Omega";
-            encounters[townAreaID + 0x2D0] = "Roll Omega";
-            encounters[townAreaID + 0x340] = "NumberMan Omega";
+            int acdcAreaBase = 0x90 * areaIDMult;
+            encounters[acdcAreaBase + subarea1Special + 0x60] = "AquaMan Omega"; // ACDC Area 1 Special
+            encounters[acdcAreaBase + subarea2Special + 0x60] = "GutsMan Omega"; // ACDC Area 2 Special
+            encounters[acdcAreaBase + subarea3Special + 0x60] = "SparkMan Omega"; // ACDC Area 3 Special
             
-            int parkAreaID = 0x92 * areaIDMult; // RS English base: 0x8100F84
-            encounters[parkAreaID + 0x1EC] = "WoodMan Omega";
-            encounters[parkAreaID + 0x274] = "BurnerMan Omega";
-            encounters[parkAreaID + 0x2FC] = "VideoMan Omega";
+            int townAreaBase = 0x91 * areaIDMult;
+            encounters[townAreaBase + subarea1Special + 0x60] = "TopMan Omega"; // Town Area 1 Special
+            encounters[townAreaBase + subarea2Special + 0x60] = "FireMan Omega"; // Town Area 2 Special
+            encounters[townAreaBase + subarea3Special + 0x60] = "Roll Omega"; // Town Area 3 Special
+            encounters[townAreaBase + subarea4Special + 0x60] = "NumberMan Omega"; // Town Area 4 Special
             
-            int overseasNetsID = 0x93 * areaIDMult; // RS English base: 0x8101738
-            encounters[overseasNetsID + 0x2E0] = "WindMan Omega";
-            encounters[overseasNetsID + 0x380] = "ThunderMan Omega";
-            encounters[overseasNetsID + 0x420] = "KendoMan Omega";
-            encounters[overseasNetsID + 0x4C0] = "ColdMan Omega";
+            int parkAreaBase = 0x92 * areaIDMult;
+            encounters[parkAreaBase + subarea1Special + 0x78] = "WoodMan Omega"; // Park Area 1 Special
+            encounters[parkAreaBase + subarea2Special + 0x78] = "BurnerMan Omega"; // Park Area 2 Special
+            encounters[parkAreaBase + subarea3Special + 0x78] = "VideoMan Omega"; // Park Area 3 Special
             
-            int undernetID = 0x94 * areaIDMult; // RS English base: 0x8101FC8
-            encounters[undernetID + 0x554] = "SearchMan Omega";
-            encounters[undernetID + 0x5F4] = "JunkMan Omega";
-            encounters[undernetID + 0x694] = "MetalMan Omega";
-            encounters[undernetID + 0x734] = "ShadeMan Omega";
-            encounters[undernetID + 0x7D4] = "LaserMan Omega";
-            encounters[undernetID + 0x898] = "ProtoMan Omega";
-            encounters[undernetID + 0x938] = "Bass Omega";
-            encounters[undernetID + 0x9D8] = "BassXX";
+            int overseasNetsBase = 0x93 * areaIDMult;
+            encounters[overseasNetsBase + subarea1Special + 0x90] = "WindMan Omega"; // Yumland Area Special
+            encounters[overseasNetsBase + subarea2Special + 0x90] = "ThunderMan Omega"; // Netopia Area Special
+            encounters[overseasNetsBase + subarea3Special + 0x90] = "KendoMan Omega"; // NetFrica Area Special
+            encounters[overseasNetsBase + subarea4Special + 0x90] = "ColdMan Omega"; // Sharo Area Special
+            
+            int undernetBase = 0x94 * areaIDMult;
+            encounters[undernetBase + subarea1Special + 0x90] = "SearchMan Omega"; // Undernet 1 Special
+            encounters[undernetBase + subarea2Special + 0x90] = "JunkMan Omega"; // Undernet 2 Special
+            encounters[undernetBase + subarea3Special + 0x90] = "MetalMan Omega"; // Undernet 3 Special
+            encounters[undernetBase + subarea4Special + 0x90] = "ShadeMan Omega"; // Undernet 4 Special
+            encounters[undernetBase + subarea5Special + 0x90] = "LaserMan Omega"; // Undernet 5 Special
+            encounters[undernetBase + subarea6Special + 0xB4] = "ProtoMan Omega"; // Undernet 6 Special
+            encounters[undernetBase + subarea8Special + 0x90] = "Bass Omega"; // Black Earth 2 Special
+            encounters[undernetBase + subarea8Special2 + 0x90] = "BassXX"; // Black Earth 2 Special 2
             
             return encounters;
         }

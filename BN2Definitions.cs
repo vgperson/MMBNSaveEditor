@@ -1425,9 +1425,9 @@ namespace MMBNSaveEditor
             return postBytes;
         }
         
-        public override bool encountersUsingSubsections { get { return true; } }
+        public override byte encounterPointerSpacing { get { return 0x8; } }
         
-        public override uint getBaseEncounterPointerForArea(byte area, byte subsection = 0xFF, char version = 'M', string language = "en", bool lc = false)
+        public override uint getBaseEncounterPointerForArea(byte area, byte subsection = 0x00, char version = 'M', string language = "en", bool lc = false)
         {
             int baseAddress = 0x0;
             
@@ -1437,47 +1437,47 @@ namespace MMBNSaveEditor
                 case 0x80: // Gas Comp
                     switch (subsection)
                     {
-                        case 0x00: baseAddress = !lc? 0x8016900 : 0x32C80; break;
-                        case 0x01: baseAddress = !lc? 0x80169C4 : 0x32D2C; break;
+                        case 0x00: baseAddress = !lc? 0x8016900 : 0x32C80; break; // Gas Comp 1
+                        case 0x01: baseAddress = !lc? 0x80169C4 : 0x32D2C; break; // Gas Comp 2
                     }
                     break;
                 case 0x81: // Bomb Comp
                     switch (subsection)
                     {
-                        case 0x00: baseAddress = !lc? 0x8016AD4 : 0x32E28; break;
-                        case 0x01: baseAddress = !lc? 0x8016C10 : 0x32E40; break;
-                        case 0x02: baseAddress = !lc? 0x8016D58 : 0x33064; break;
-                        case 0x03: baseAddress = !lc? 0x8016EA4 : 0x3318C; break;
+                        case 0x00: baseAddress = !lc? 0x8016AD4 : 0x32E28; break; // Bomb Comp 1
+                        case 0x01: baseAddress = !lc? 0x8016C10 : 0x32E40; break; // Bomb Comp 2
+                        case 0x02: baseAddress = !lc? 0x8016D58 : 0x33064; break; // Bomb Comp 3
+                        case 0x03: baseAddress = !lc? 0x8016EA4 : 0x3318C; break; // Bomb Comp 4
                     }
                     break;
                 case 0x82: // Mother Comp
                     switch (subsection)
                     {
-                        case 0x00: baseAddress = !lc? 0x8017034 : 0x332F8; break;
-                        case 0x01: baseAddress = !lc? 0x8017174 : 0x33414; break;
-                        case 0x02: baseAddress = !lc? 0x80172A4 : 0x33520; break;
-                        case 0x03: baseAddress = !lc? 0x80173E4 : 0x3363C; break;
-                        case 0x04: baseAddress = !lc? 0x801751C : 0x33750; break;
+                        case 0x00: baseAddress = !lc? 0x8017034 : 0x332F8; break; // Mother Comp 1
+                        case 0x01: baseAddress = !lc? 0x8017174 : 0x33414; break; // Mother Comp 2
+                        case 0x02: baseAddress = !lc? 0x80172A4 : 0x33520; break; // Mother Comp 3
+                        case 0x03: baseAddress = !lc? 0x80173E4 : 0x3363C; break; // Mother Comp 4
+                        case 0x04: baseAddress = !lc? 0x801751C : 0x33750; break; // Mother Comp 5
                     }
                     break;
                 case 0x83: // Castle Comp
                     switch (subsection)
                     {
-                        case 0x00: baseAddress = !lc? 0x801769C : 0x338B0; break;
-                        case 0x01: baseAddress = !lc? 0x80177B4 : 0x339A4; break;
-                        case 0x02: baseAddress = !lc? 0x80178D4 : 0x33AA0; break;
-                        case 0x03: baseAddress = !lc? 0x8017A10 : 0x33BB8; break;
-                        case 0x04: baseAddress = !lc? 0x8017B3C : 0x33CC0; break;
+                        case 0x00: baseAddress = !lc? 0x801769C : 0x338B0; break; // Castle Comp 1
+                        case 0x01: baseAddress = !lc? 0x80177B4 : 0x339A4; break; // Castle Comp 2
+                        case 0x02: baseAddress = !lc? 0x80178D4 : 0x33AA0; break; // Castle Comp 3
+                        case 0x03: baseAddress = !lc? 0x8017A10 : 0x33BB8; break; // Castle Comp 4
+                        case 0x04: baseAddress = !lc? 0x8017B3C : 0x33CC0; break; // Castle Comp 5
                     }
                     break;
                 case 0x84: // Air Comp
                     switch (subsection)
                     {
-                        case 0x00: baseAddress = !lc? 0x8017CAC : 0x33E10; break;
-                        case 0x01: baseAddress = !lc? 0x8017DD8 : 0x33F18; break;
-                        case 0x02: baseAddress = !lc? 0x8017F00 : 0x3401C; break;
-                        case 0x03: baseAddress = !lc? 0x8018028 : 0x34120; break;
-                        case 0x04: baseAddress = !lc? 0x8018158 : 0x3422C; break;
+                        case 0x00: baseAddress = !lc? 0x8017CAC : 0x33E10; break; // Air Comp 1
+                        case 0x01: baseAddress = !lc? 0x8017DD8 : 0x33F18; break; // Air Comp 2
+                        case 0x02: baseAddress = !lc? 0x8017F00 : 0x3401C; break; // Air Comp 3
+                        case 0x03: baseAddress = !lc? 0x8018028 : 0x34120; break; // Air Comp 4
+                        case 0x04: baseAddress = !lc? 0x8018158 : 0x3422C; break; // Air Comp 5
                     }
                     break;
                 case 0x85: // Apartment Comp
@@ -1592,8 +1592,8 @@ namespace MMBNSaveEditor
                         case 0x17: baseAddress = !lc? 0x801BC50 : 0x37730; break; // WWW Area 1 Special
                         case 0x18: baseAddress = !lc? 0x801BCC4 : 0x377A4; break; // WWW Area 2 Special
                         case 0x19: baseAddress = !lc? 0x801BD40 : 0x37820; break; // WWW Area 3 Special
-                        case 0x29: baseAddress = !lc? 0x801BE40 : 0x3789C; break; // WWW Area 3 Special 2 (note that Special 2 and 3 are in swapped order)
-                        case 0x39: baseAddress = !lc? 0x801BDBC : 0x3789C; break; // WWW Area 3 Special 3 (only exists in GBA, so treat like Special 2 in LC)
+                        case 0x29: baseAddress = !lc? 0x801BE40 : 0x37920; break; // WWW Area 3 Special 2
+                        case 0x39: baseAddress = !lc? 0x801BDBC : 0x3789C; break; // WWW Area 3 Special 3
                     }
                     break;
             }
@@ -1612,7 +1612,6 @@ namespace MMBNSaveEditor
             Dictionary<int, string> encounters = new Dictionary<int, string>();
             
             // Define "encounter IDs" (a thing I made up, not really a thing in-game) by combining area, subsection, and offset within that subsection.
-            // (Subsections are only used for BN2 currently, because in BN2, offsets based on area alone are not consistent between GBA and LC.)
             int areaIDMult = 0x10000;
             int sectionIDMult = 0x100;
             
@@ -1626,25 +1625,25 @@ namespace MMBNSaveEditor
             int subarea10Special2 = 0x29 * sectionIDMult;
             
             int denAreaBase = 0x90 * areaIDMult;
-            encounters[denAreaBase + subarea1Special + 0x40] = "AirMan V3";
+            encounters[denAreaBase + subarea1Special + 0x40] = "AirMan V3"; // Den Area 1 Special
             
             int kotoAreaBase = 0x91 * areaIDMult;
-            encounters[kotoAreaBase + subarea1Special + 0x60] = "QuickMan V3";
+            encounters[kotoAreaBase + subarea1Special + 0x60] = "QuickMan V3"; // Koto Area Special
             
             int yumlandAreaBase = 0x92 * areaIDMult;
-            encounters[yumlandAreaBase + subarea2Special + 0x60] = "CutMan V3";
+            encounters[yumlandAreaBase + subarea2Special + 0x60] = "CutMan V3"; // Yumland Area 2 Special
             
             int netopiaAreaBase = 0x93 * areaIDMult;
-            encounters[netopiaAreaBase + subarea1Special + 0x60] = "KnightMan V3";
+            encounters[netopiaAreaBase + subarea1Special + 0x60] = "KnightMan V3"; // Netopia Area 1 Special
             
             int undernetWWWBase = 0x94 * areaIDMult;
-            encounters[undernetWWWBase + subarea2Special + 0x60] = "MagnetMan V3";
-            encounters[undernetWWWBase + subarea5Special + 0x68] = "ShadowMan V3";
-            encounters[undernetWWWBase + subarea7Special + 0x68] = "FreezeMan V3";
-            encounters[undernetWWWBase + subarea8Special + 0x60] = "PharaohMan V3";
-            encounters[undernetWWWBase + subarea9Special + 0x68] = "NapalmMan V3";
-            encounters[undernetWWWBase + subarea10Special + 0x68] = "PlanetMan V3"; // Also exists in Special2 and Special3 groups
-            encounters[undernetWWWBase + subarea10Special2 + 0x70] = "Bass Deluxe"; // Also exists in Special3 group
+            encounters[undernetWWWBase + subarea2Special + 0x60] = "MagnetMan V3"; // Undernet 2 Special
+            encounters[undernetWWWBase + subarea5Special + 0x68] = "ShadowMan V3"; // Undernet 5 Special
+            encounters[undernetWWWBase + subarea7Special + 0x68] = "FreezeMan V3"; // Undernet 7 Special
+            encounters[undernetWWWBase + subarea8Special + 0x60] = "PharaohMan V3"; // WWW Area 1 Special
+            encounters[undernetWWWBase + subarea9Special + 0x68] = "NapalmMan V3"; // WWW Area 2 Special
+            encounters[undernetWWWBase + subarea10Special + 0x68] = "PlanetMan V3"; // WWW Area 3 Special, also exists in Special 2 and Special 3
+            encounters[undernetWWWBase + subarea10Special2 + 0x70] = "Bass Deluxe"; // WWW Area 3 Special 2, also exists in Special 3
             
             return encounters;
         }

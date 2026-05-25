@@ -45,7 +45,7 @@ namespace MMBNSaveEditor
             ConsoleC.enableConsoleColors();
             loadUserSettings();
             
-            // Debug functions using data from clipboard, so they can run before loading save.
+            // Debug functions using data from clipboard or a non-save file, so they can run before loading save.
             //SaveData.processROMChipData(4, "data", 0x197EC);
             //SaveData.processROMChipData(4, "alphabet");
             //SaveData.processROMChipData(4, "unknown0E");
@@ -54,6 +54,13 @@ namespace MMBNSaveEditor
             //SaveData.processROMChipData(4, "codedef");
             //SaveData.processROMChipData(4, "sizedef");
             //SaveData.processROMChipData(4, "orderdef");
+            
+            //SaveData.compileEncounterPointers(2, 0x50F4); // BN2 GBA English
+            //SaveData.compileEncounterPointers(2, 0, 0, new int[] { 0x2EC40, 0x2EDE8, 0x2F2B8, 0x2F870, 0x2FDD0, 0x30330, -1, -1, 0x30910, -1, -1, -1, 0x30D48, 0x318F0, -1, -1, 0x31CC0, 0x31FA0, 0x322A0, 0x325A8, 0x329C0 }); // BN2 LC
+            //SaveData.compileEncounterPointers(3, 0x5D70); // BN3 Blue/White GBA English
+            //SaveData.compileEncounterPointers(3, 0, 0, new int[] { 0x38200, 0x38408, 0x38988, 0x39018, 0x39618, 0x39820, 0x39A28, 0x39C30, 0x39E38, 0x3A1E0, 0x3A3E8, 0x3A748, 0x3A950, 0x3B6A0, 0x3BB98, 0x3BDA0, 0x3BFA8, 0x3C2F8, 0x3C5B0, 0x3C930, 0x3CED8, 0x3D7E8 }); // BN3 Blue LC
+            //SaveData.compileEncounterPointers(4, 0x18014); // BN4 Red Sun/Blue Moon GBA English
+            //SaveData.compileEncounterPointers(4, 0, 0, new int[] { 0x3ED30, 0x3EFA0, 0x3F470, 0x3F970, 0x3FB68, 0x3FD60, 0x3FF58, 0x40150, 0x40348, 0x40540, 0x40738, 0x40930, 0x40B28, 0x41A30, 0x42268, 0x423A8, 0x425A0, 0x42CB0, 0x433E0, 0x43C18, 0x44468 }); // BN4 Red Sun/Blue Moon LC
             
             // Definition for specific values to use in fresh saves for comparison.
             /*debugForcedFieldValues = new Dictionary<string, uint>();
@@ -114,7 +121,7 @@ namespace MMBNSaveEditor
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("ERROR: " + e.Message);
+                    ConsoleC.WriteLineHL("{ERROR:} " + e.Message, "red");
                     Console.WriteLine(e.StackTrace);
                     
                     waitForEnter();
